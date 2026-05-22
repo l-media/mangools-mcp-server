@@ -45,6 +45,9 @@
   "bugs": {
     "url": "https://github.com/l-media/mangools-mcp-server/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^3.23.8"

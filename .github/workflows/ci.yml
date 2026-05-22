@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check and build
+        run: pnpm build
+
+      - name: Smoke test (initialize + tools/list)
+        env:
+          MANGOOLS_API_TOKEN: dummy
+        run: |
+          node -e '
+            const { spawn } = require("child_process");
+            const child = spawn("node", ["dist/index.js"], {
+              stdio: ["pipe", "pipe", "inherit"],
+              env: { ...process.env },
+            });
+            let buf = "";
+            const expected = 77;
+            const timeout = setTimeout(() => {
+              console.error("[smoke] timeout");
+              child.kill();
+              process.exit(1);
+            }, 10000);
+            child.stdout.on("data", (d) => {
+              buf += d.toString();
+              let nl;
+              while ((nl = buf.indexOf("\n")) !== -1) {
+                const line = buf.slice(0, nl);
+                buf = buf.slice(nl + 1);
+                if (!line.trim()) continue;
+                const msg = JSON.parse(line);
+                if (msg.id === 1) {
+                  child.stdin.write(JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" }) + "\n");
+                  child.stdin.write(JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/list" }) + "\n");
+                } else if (msg.id === 2) {
+                  const n = msg.result.tools.length;
+                  console.log(`[smoke] registered ${n} tools (expected ${expected})`);
+                  clearTimeout(timeout);
+                  child.kill();
+                  process.exit(n === expected ? 0 : 1);
+                }
+              }
+            });
+            child.stdin.write(JSON.stringify({
+              jsonrpc: "2.0", id: 1, method: "initialize",
+              params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "ci", version: "0" } }
+            }) + "\n");
+          '

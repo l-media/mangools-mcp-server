@@ -1,5 +1,7 @@
 # Mangools MCP Server
 
+[![npm version](https://img.shields.io/npm/v/mangools-mcp-server.svg)](https://www.npmjs.com/package/mangools-mcp-server)
+[![CI](https://github.com/l-media/mangools-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/l-media/mangools-mcp-server/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
 
@@ -31,6 +33,36 @@ Every tool was smoke-tested live against the Mangools API. 75/77 work as documen
 
 ## Install
 
+Pick the option that fits your workflow.
+
+### Option 1: zero-install via `npx` (easiest)
+
+No clone, no build — just point your MCP client at `npx`. Everything else (install, build, run) happens on first launch.
+
+```bash
+# In an MCP-capable client like Claude Code:
+claude mcp add mangools \
+  --scope user \
+  --env MANGOOLS_API_TOKEN=your_real_token_here \
+  -- npx -y mangools-mcp-server
+```
+
+Or in a project-scoped `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "mangools": {
+      "command": "npx",
+      "args": ["-y", "mangools-mcp-server"],
+      "env": { "MANGOOLS_API_TOKEN": "your_real_token_here" }
+    }
+  }
+}
+```
+
+### Option 2: clone + build (for hacking on the code)
+
 ```bash
 git clone https://github.com/l-media/mangools-mcp-server.git
 cd mangools-mcp-server
@@ -38,9 +70,11 @@ pnpm install
 pnpm build
 ```
 
-The build produces `dist/index.js` — that's the entry point your MCP client will run.
+The build produces `dist/index.js` — that's the entry point your MCP client will run. Then point your `.mcp.json` at that file (see the **Configure Claude Code** section below).
 
-## Configure Claude Code
+## Configure Claude Code (clone + build path)
+
+If you used the npx path above, you're already configured — skip ahead to **Activate the server**. If you cloned the repo, you need to point your `.mcp.json` at the built `dist/index.js`.
 
 There are two scopes for MCP config:
 
@@ -84,7 +118,7 @@ claude mcp add mangools \
   -- node /ABSOLUTE/PATH/TO/mangools-mcp-server/dist/index.js
 ```
 
-### Activate the server
+## Activate the server
 
 In Claude Code:
 
