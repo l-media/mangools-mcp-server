@@ -4,7 +4,8 @@
   "description": "Model Context Protocol (MCP) server exposing the Mangools SEO API (KWFinder, SERPWatcher, SERPChecker, LinkMiner, SiteProfiler, AI Search Watcher) as 77 individual tools for Claude Code and other MCP clients.",
   "type": "module",
   "bin": {
-    "mangools-mcp": "dist/index.js"
+    "mangools-mcp": "dist/index.js",
+    "mangools-mcp-server": "dist/index.js"
   },
   "files": [
     "dist",
