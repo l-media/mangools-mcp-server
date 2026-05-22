@@ -1,0 +1,60 @@
+{
+  "name": "mangools-mcp-server",
+  "version": "0.1.0",
+  "description": "Model Context Protocol (MCP) server exposing the Mangools SEO API (KWFinder, SERPWatcher, SERPChecker, LinkMiner, SiteProfiler, AI Search Watcher) as 77 individual tools for Claude Code and other MCP clients.",
+  "type": "module",
+  "bin": {
+    "mangools-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "claude-code",
+    "mangools",
+    "seo",
+    "kwfinder",
+    "serpwatcher",
+    "serpchecker",
+    "linkminer",
+    "siteprofiler",
+    "ai-search-watcher",
+    "keyword-research",
+    "rank-tracking",
+    "backlinks"
+  ],
+  "author": "Lince Media LLC <info@lince.media>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/l-media/mangools-mcp-server.git"
+  },
+  "homepage": "https://github.com/l-media/mangools-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/l-media/mangools-mcp-server/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.15.0"
+}
